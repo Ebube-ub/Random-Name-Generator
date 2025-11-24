@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Secret Santa</title>
+    <link rel="stylesheet" href="secret_santa.css">
+</head> 
+<body>
+
+<div style="display: flex; width: 100vw; min-height: 100vh;">
+  <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+    <div id="santa">
+      <p></p>
+    </div>
+    <button id="button">Generate</button>
+    <input type="reset" value="Reset" onclick="location.reload()">
+    <h4>Click to Unwrap the Mystery and Share the Joy</h4>
+    <h5> Created by Godswill Ubani</h5>
+    <h6> i4nnova Intern</h6>
+  </div>
+  <div class="right">
+    <h3>Generated Names</h3>
+    <table id="numberTable">
+      <thead>
+        <tr>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+<script>
+var santa = document.getElementById("santa");
+var button = document.getElementById("button");
+var usedNumbers = new Set();
+var tableBody = document.querySelector("#numberTable tbody");
+
+const names = ['Chuks', 'Ayomide', 'Iyabo', 'Idowu', 'Ephiram', 'Lola', 'Moses', 'Chinyere', 'Cynthia', 'Great', 'Ugo', 'Nathaniel', 'Blessing', 'Mr. Kelechi', 'Maryam', 'Mr. Ade', 'Chinedu', 'Charles', 'Mmeso', 'Gloria', 'Mr. Bayo'];
+
+button.addEventListener("click", function () {
+    if (usedNumbers.size >= names.length) {
+        santa.innerHTML = "<p>Done!!</p>";
+        return;
+    }
+
+    let randomIndex;
+    do {
+        randomIndex = Math.floor(Math.random() * names.length);
+    } while (usedNumbers.has(randomIndex));
+
+    usedNumbers.add(randomIndex);
+    let selectedName = names[randomIndex];
+
+    santa.innerHTML = "<p>" + selectedName + "</p>";
+
+    // Insert names in 3 columns per row
+    let lastRow = tableBody.lastElementChild;
+
+    // If no row exists or the last row already has 3 cells → create a new row
+    if (!lastRow || lastRow.cells.length === 3) {
+        lastRow = tableBody.insertRow();
+    }
+
+    let cell = lastRow.insertCell();
+    cell.textContent = selectedName;
+});
+
+</script>
+</body>
+</html>
