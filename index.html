@@ -1,42 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Secret Santa</title>
     <link rel="stylesheet" href="random.css">
-</head> 
+</head>
 <body>
 
-<div style="display: flex; width: 100vw; min-height: 100vh;">
-  <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-    <div id="santa">
-      <p></p>
-    </div>
-    <button id="button">Generate</button>
-    <input type="reset" value="Reset" onclick="location.reload()">
-    <h4>Click to Unwrap the Mystery and Share the Joy</h4>
-    <h5> Created by Godswill Ubani</h5>
-    <h6> i4nnova Intern</h6>
+<!-- ADD PAGE -->
+<div id="addPage">
+  <div class="add-container">
+    <h2>Add Names</h2>
+    <input type="text" id="newName" placeholder="Enter a name">
+    <button id="confirmAdd">Add Name</button><br>
+    <button id="startBtn">Randomize</button>
   </div>
-  <div class="right">
-    <h3>Generated Names</h3>
-    <table id="numberTable">
-      <thead>
-        <tr>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
+  <div class="names">
+    <h3>Names Added</h3>
+    <ul id="addNamesList"></ul>
 </div>
+    
+</div>
+
+<!-- GENERATE PAGE -->
+<div id="generatePage" style="display:none;">
+    <div style="display:flex; flex-direction:row; width:100%;">
+        <!-- LEFT SIDE -->
+        <div>
+            <div id="santa"><p></p></div>
+            <button id="button">Generate</button><br>
+            <button id="goAddPage">Add a Name</button><br>
+            <input type="reset" value="Reset" onclick="location.reload()">
+        </div>
+
+        <!-- RIGHT SIDE -->
+        <div class="right">
+            <h3>Generated Names</h3>
+            <table id="generatedTable">
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="bottomTextContainer">
+        <h5>Created by Godswill Ubani</h5>
+        <h6>i4nnova Intern</h6>
+    </div>
+</div>
+
 <script>
-var santa = document.getElementById("santa");
-var button = document.getElementById("button");
-var usedNumbers = new Set();
-var tableBody = document.querySelector("#numberTable tbody");
+const names = [];
+const usedNumbers = new Set();
 
-const names = ['Chuks', 'Ayomide', 'Iyabo', 'Idowu', 'Ephraim', 'Lola', 'Moses', 'Chinyere', 'Cynthia', 'Great', 'Ugo', 'Stephen', 'Blessing', 'Mr. Kelechi', 'Mariam', 'Mr. Ade', 'Chinedu', 'Charles', 'Mmeso', 'Gloria', 'Mr. Bayo'];
+const addPage = document.getElementById("addPage");
+const generatePage = document.getElementById("generatePage");
 
-button.addEventListener("click", function () {
+const newNameInput = document.getElementById("newName");
+const confirmAdd = document.getElementById("confirmAdd");
+const startBtn = document.getElementById("startBtn");
+
+const goAddPage = document.getElementById("goAddPage");
+const santa = document.getElementById("santa");
+const button = document.getElementById("button");
+
+const addNamesList = document.getElementById("addNamesList");
+const generatedTableBody = document.querySelector("#generatedTable tbody");
+
+confirmAdd.addEventListener("click", () => {
+    const newName = newNameInput.value.trim();
+    if (!newName) return;
+
+    names.push(newName);
+    newNameInput.value = "";
+
+    // Update bullet list
+    addNamesList.innerHTML = "";
+    names.forEach(name => {
+        const li = document.createElement("li");
+        li.textContent = name;
+        addNamesList.appendChild(li);
+    });
+
+    if (names.length > 0) startBtn.style.display = "inline-block";
+});
+
+
+/* START GENERATING */
+startBtn.addEventListener("click", () => {
+    addPage.style.display = "none";
+    generatePage.style.display = "flex";
+    document.querySelector(".right").style.display = "block";
+});
+
+/* GO BACK TO ADD PAGE */
+goAddPage.addEventListener("click", () => {
+    generatePage.style.display = "none";
+    addPage.style.display = "flex";
+    document.querySelector(".right").style.display = "none";
+});
+
+/* GENERATE RANDOM NAME */
+button.addEventListener("click", () => {
     if (usedNumbers.size >= names.length) {
         santa.innerHTML = "<p>Done!!</p>";
         return;
@@ -48,24 +112,16 @@ button.addEventListener("click", function () {
     } while (usedNumbers.has(randomIndex));
 
     usedNumbers.add(randomIndex);
-    let selectedName = names[randomIndex];
+    const selectedName = names[randomIndex];
+    santa.innerHTML = `<p>${selectedName}</p>`;
 
-    santa.innerHTML = "<p>" + selectedName + "</p>";
-
-    // Insert names in 3 columns per row
-    let lastRow = tableBody.lastElementChild;
-
-    // If no row exists or the last row already has 3 cells → create a new row
-    if (!lastRow || lastRow.cells.length === 3) {
-        lastRow = tableBody.insertRow();
-    }
-
-    let cell = lastRow.insertCell();
+    // Add to table
+    let lastRow = generatedTableBody.lastElementChild;
+    if (!lastRow || lastRow.cells.length === 3) lastRow = generatedTableBody.insertRow();
+    const cell = lastRow.insertCell();
     cell.textContent = selectedName;
 });
-
 </script>
+
 </body>
-
 </html>
-
